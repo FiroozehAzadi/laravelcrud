@@ -47,7 +47,7 @@ built using laravel 11 framework
 <td>{{$task->title}}</td>
 <td>{{$task->body}}</td>
 <td class="{{$task->done?'text-success':'text-danger'}}">{{$task->done?'Yes':'No'}}</td>
-<td><a href="{{action('App\Http\Controllers\TaskController@edit',[$task->id]),$absolute = true}}" class="">edit</a></td>
+<td><a href="/edit/{{$task->id}}" class="">edit</a></td>
 <td><a href="/delete/{{$task->id}}" class="">delete</a></td>
 
 </tr>

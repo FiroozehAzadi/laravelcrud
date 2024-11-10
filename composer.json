@@ -1,9 +1,0 @@
-{
-    "require": {
-        "laravel/ui": "^4.5",
-        "twbs/bootstrap": "5.3.3"
-    },
-    "require-dev": {
-        "laravel/breeze": "^2.2"
-    }
-}

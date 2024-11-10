@@ -1,48 +1,59 @@
 <?php
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TaskController;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
-Route::model('task','Task');
-Route::get('/edit/{id}','App\Http\Controllers\TaskController@edit');
-Route::post('/edit', 'App\Http\Controllers\TaskController@update');
-Route::get('task/{id}', 'App\Http\Controllers\TaskController@show');
+Auth::routes();
+  
+  
 
-Route::get('/showtask','App\Http\Controllers\TaskController@index');
-Route::get('/create','App\Http\Controllers\TaskController@create');
-Route::post('/store', 'App\Http\Controllers\TaskController@store');
-Route::get('/delete/{id}', function ($id) {
-    return View::make('tasks.delete')->with('id',$id);
+    Route::resource('roles',RoleController::class);
+    Route::resource('users', UserController::class);
+    Route::resource('products', ProductController::class);
 
+
+Route::get('/home', function () {
+    return view('home');
 });
-
-Route::post('/delete', 'App\Http\Controllers\TaskController@destroy');
-
-Route::get('/', function () {
-    return View::make('home');
-
-});
-
-
 Route::get('/about', function () {
-    return View::make('about');
-
+    return view('about');
 });
-
 Route::get('/contact', function () {
-    return View::make('contact',['subject'=>"",'message'=>'']);
-
+    return view('contact')->with(['message'=>'','subject'=>'']);
 });
-
 Route::post('/contact', function (Request $request) {
-    $data=$request::all();
-    $rules=[
-        'subject'=>'required',
-        'message'=>'required'        
-    ];
-    $validator = Validator::make($data, $rules);
-    if($validator->fails()) {
-        return Redirect::to('contact')->withErrors($validator)->withInput();
-    }
-    return view('contact',['message'=>$data['message'],'subject'=>$data['subject']]);
+    $message=$request::input('message');
+    $subject=$request::input('subject');
+    return view('contact')->with(['message'=>$message,'subject'=>$subject]);
+});
+Route::get('/create', function () {
+    return view('tasks.createTask');
+});
+Route::post('/store','App\Http\Controllers\TaskController@store');
+Route::get('/edit/{id}','App\Http\Controllers\TaskController@edit');
+Route::post('/edit','App\Http\Controllers\TaskController@update');
+Route::get('/delete/{id}',function($id){
+    return view('tasks.delete')->with("id", $id);
 
 });
+Route::post('/delete','App\Http\Controllers\TaskController@destroy')->middleware('auth:admin');;
 
+ Route::get('/showtask','App\Http\Controllers\TaskController@index');
+Route::get('/', function () {
+    return view('welcome');
+});
 
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';

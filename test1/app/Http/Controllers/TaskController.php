@@ -30,7 +30,7 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTaskRequest $request)
+    public function store(Request $request)
     {
         //
         $task = Task::create($request->all());
@@ -63,7 +63,7 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTaskRequest $request, Task $task)
+    public function update(Request $request, Task $task)
     {
         //
         $task = Task::findOrFail($request->id);
@@ -88,3 +88,4 @@ class TaskController extends Controller
 
     }
 }
+
